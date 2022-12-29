@@ -14,7 +14,7 @@ from PIL import Image, ImageTk
 
 from Commands import UnitCommand
 from Commands import StickCommand
-from Commands.Keys import Direction, Stick, Button, Direction, KeyPress
+from Commands.Keys import Direction, Stick, Button, Direction, NEUTRAL, KeyPress
 
 import logging
 from logging import INFO, StreamHandler, getLogger, DEBUG, NullHandler
@@ -56,7 +56,7 @@ class MouseStick(PythonCommand):
 
 
 class CaptureArea(tk.Canvas):
-    def __init__(self, camera, fps, is_show, ser, master=None, show_width=640, show_height=360):
+    def __init__(self, camera, fps, is_show, ser: KeyPress, master=None, show_width=640, show_height=360):
         super().__init__(master, borderwidth=0, cursor='tcross', width=show_width, height=show_height)
 
         self._logger = getLogger(__name__)
@@ -281,29 +281,19 @@ class CaptureArea(tk.Canvas):
         if (self._langle and self._lmag) is not None and isTakeLog:
             _time = time.perf_counter()
             if _time - self.calc_time > 0.05:
-                # thread_1 = threading.Thread(target=self.LStick.LStick,
-                #                             args=(langle,),
-                #                             kwargs={'r': mag, 'duration': _time - self.calc_time})
-                # thread_1.start()
-                self.ser.writeRow(
-                    f'3 8 '
-                    f'{hex(int(128 + mag * 127.5 * np.cos(np.deg2rad(langle))))} '
-                    f'{hex(int(128 - mag * 127.5 * np.sin(np.deg2rad(langle))))} '
-                    f'80 80',
-                    is_show=False
-                )
+                self.ser.input(Direction(Stick.LEFT, (
+                    int(128 + mag * 127.5 * np.cos(np.deg2rad(langle))),
+                    255 - int(128 - mag * 127.5 * np.sin(np.deg2rad(langle)))
+                )))
                 self.dq.append([langle,
                                 mag,
                                 _time - self.calc_time])
                 self.calc_time = _time
         elif not isTakeLog:
-            self.ser.writeRow(
-                f'3 8 '
-                f'{hex(int(128 + mag * 127.5 * np.cos(np.deg2rad(langle))))} '
-                f'{hex(int(128 - mag * 127.5 * np.sin(np.deg2rad(langle))))}'
-                f' 80 80',
-                is_show=False
-            )
+            self.ser.input(Direction(Stick.LEFT, (
+                int(128 + mag * 127.5 * np.cos(np.deg2rad(langle))),
+                255 - int(128 - mag * 127.5 * np.sin(np.deg2rad(langle)))
+            )))
 
         if mag >= 1:
             center_x = (self.radius + self.radius // 11) * np.cos(np.deg2rad(langle))
@@ -324,10 +314,7 @@ class CaptureArea(tk.Canvas):
 
     def mouseLeftRelease(self, ser):
         self.config(cursor='tcross')
-        self.ser.writeRow(
-            f'3 8 80 80',
-            is_show=False
-        )
+        self.ser.input(Direction(Stick.LEFT, NEUTRAL))
         self.delete("lcircle")
         self.delete("lcircle2")
         if self.master.is_use_right_stick_mouse.get():
@@ -378,26 +365,17 @@ class CaptureArea(tk.Canvas):
         if (self._langle and self._lmag) is not None and isTakeLog:
             _time = time.perf_counter()
             if _time - self.calc_time > 0.05:
-                # thread_1 = threading.Thread(target=self.RStick.RStick,
-                #                             args=(rangle,),
-                #                             kwargs={'r': mag, 'duration': _time - self.calc_time})
-                # thread_1.start()
-                # self.RStick.RStick(rangle, r=mag)
-                self.ser.writeRow(
-                    f'3 8 80 80 '
-                    f'{hex(int(128 + mag * 127.5 * np.cos(np.deg2rad(rangle))))} '
-                    f'{hex(int(128 - mag * 127.5 * np.sin(np.deg2rad(rangle))))}',
-                    is_show=False
-                )
+                self.ser.input(Direction(Stick.RIGHT, (
+                    int(128 + mag * 127.5 * np.cos(np.deg2rad(rangle))),
+                    255 - int(128 - mag * 127.5 * np.sin(np.deg2rad(rangle)))
+                )))
                 self.dq.append([rangle, mag, _time - self.calc_time])
                 self.calc_time = _time
         elif not isTakeLog:
-            self.ser.writeRow(
-                f'3 8 80 80 '
-                f'{hex(int(128 + mag * 127.5 * np.cos(np.deg2rad(rangle))))} '
-                f'{hex(int(128 - mag * 127.5 * np.sin(np.deg2rad(rangle))))}',
-                is_show=False
-            )
+            self.ser.input(Direction(Stick.RIGHT, (
+                int(128 + mag * 127.5 * np.cos(np.deg2rad(rangle))),
+                255 - int(128 - mag * 127.5 * np.sin(np.deg2rad(rangle)))
+            )))
         if mag >= 1:
             center_x = (self.radius + self.radius // 11) * np.cos(np.deg2rad(rangle))
             center_y = (self.radius + self.radius // 11) * np.sin(np.deg2rad(rangle))
@@ -417,10 +395,7 @@ class CaptureArea(tk.Canvas):
 
     def mouseRightRelease(self, ser):
         self.config(cursor='tcross')
-        self.ser.writeRow(
-            f'3 8 80 80 80 80',
-            is_show=False
-        )
+        self.ser.input(Direction(Stick.RIGHT, NEUTRAL))
         self.delete("rcircle")
         self.delete("rcircle2")
         if self.master.is_use_left_stick_mouse.get():
