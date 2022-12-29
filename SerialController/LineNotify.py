@@ -16,7 +16,6 @@ class Line_Notify:
         self._logger.setLevel(DEBUG)
         self._logger.propagate = True
 
-        self.res = None
         self.token_file = configparser.ConfigParser(comment_prefixes='#', allow_no_value=True)
         self.open_file_with_utf8()
         self.camera = camera
@@ -24,7 +23,10 @@ class Line_Notify:
         self.token_num = len(self.token_list)
         # self.line_notify_token = self.token_file['LINE'][token_name]
         self.headers = [{'Authorization': f'Bearer {token}'} for key, token in self.token_list.items()]
-        self.res = [requests.get('https://notify-api.line.me/api/status', headers=head) for head in self.headers]
+        try:
+            self.res = [requests.get('https://notify-api.line.me/api/status', headers=head) for head in self.headers]
+        except requests.exceptions.RequestException:
+            self.res = []
         self.status = [responses.status_code for responses in self.res]
         self.chk_token_json = [responses.json() for responses in self.res]
 
@@ -55,6 +57,7 @@ class Line_Notify:
             elif stat == 200:
                 self._logger.info("Valid token")
                 return "LINE-Token Check OK!"
+        return ""
 
     def send_text(self, notification_message, token='token'):
         """
@@ -126,12 +129,12 @@ class Line_Notify:
                 self._logger.info(f"LINE API - ImageLimit: {self.res[i].headers['X-RateLimit-Limit']}")
                 self._logger.info(f"LINE API - ImageRemaining: {self.res[i].headers['X-RateLimit-ImageRemaining']}")
                 self._logger.info(f"Reset time: {dt}")
+        except IndexError as e:
+            self._logger.error(e)
         except AttributeError as e:
             self._logger.error(e)
-            pass
         except KeyError as e:
             self._logger.error(e)
-            pass
 
 
 if __name__ == "__main__":
