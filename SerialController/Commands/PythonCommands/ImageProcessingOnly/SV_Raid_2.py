@@ -45,7 +45,9 @@ class SV_Raid_2(ImageProcPythonCommand):
         print("")
 
         while True:
-            self.wait(1)
+            self.wait(0.5)
+            self.reload_com_port()
+            self.wait(0.5)
             print("--------------------------------------------")
             self.poke = ""
             self.type_index = 0
