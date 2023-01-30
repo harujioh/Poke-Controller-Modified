@@ -219,7 +219,7 @@ class PythonCommand(CommandBase.Command):
     # Reload COM port (temporary function)
     def reload_com_port(self):
         if self.keys.ser.isOpened():
-            print('Port is already opened and being closed.')
+            # print('Port is already opened and being closed.')
             self.keys.ser.closeSerial()
             # self.keyPress = None (ここでNoneはNGなはず)
             self.reload_com_port()
