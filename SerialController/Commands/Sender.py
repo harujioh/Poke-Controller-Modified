@@ -50,9 +50,9 @@ class Sender:
                     return True
                 elif os.name == 'posix':
                     if platform.system() == 'Darwin':
-                        print('connecting to ' + "/dev/tty.usbserial-" + str(portNum) + "(" + str(baudrate) + ")")
-                        self._logger.info('connecting to ' + "/dev/tty.usbserial-" + str(portNum) + "(" + str(baudrate) + ")")
-                        self.ser = serial.Serial("/dev/tty.usbserial-" + str(portNum), baudrate)
+                        print('connecting to ' + "/dev/tty." + str(portNum) + "(" + str(baudrate) + ")")
+                        self._logger.info('connecting to ' + "/dev/tty." + str(portNum) + "(" + str(baudrate) + ")")
+                        self.ser = serial.Serial("/dev/tty." + str(portNum), baudrate)
                         return True
                     else:
                         print('connecting to ' + "/dev/ttyUSB" + str(portNum) + "(" + str(baudrate) + ")")
