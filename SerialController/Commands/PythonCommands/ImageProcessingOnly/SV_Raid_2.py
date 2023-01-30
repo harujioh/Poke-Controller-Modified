@@ -147,8 +147,8 @@ class SV_Raid_2(ImageProcPythonCommand):
         img2[0:19, 0:62] = 255
         img2[0:62, 0:19] = 255
         ret, img_otsu = cv2.threshold(img2, 70, 255, cv2.THRESH_BINARY)
-        cv2.imwrite("out_sample3.jpg", img_otsu)
-        self.hash = imagehash.phash(Image.open("out_sample3.jpg"))
+        cv2.imwrite("./Output/sample.jpg", img_otsu)
+        self.hash = imagehash.phash(Image.open("./Output/sample.jpg"))
         with open('./Template/SV/Raid/PokeSV_PhashList.csv', encoding="utf-8") as f:
             reader = csv.reader(f)
             P_db = [row for row in reader]
@@ -163,6 +163,14 @@ class SV_Raid_2(ImageProcPythonCommand):
                 output = Pokename
             else:
                 pass
+        
+        try:
+            result, n = cv2.imencode(".jpg", img_otsu, None)
+            if result:
+                with open("./Output/sample_" + output + "_" + str(self.hash) + ".jpg", mode='w+b') as f:
+                    n.tofile(f)
+        except Exception as e:
+            print(e)
         return output
 
     def star_count(self):

@@ -120,3 +120,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Temporary Output
+/SerialController/Output
