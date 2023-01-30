@@ -36,14 +36,6 @@ class SV_Raid_2(ImageProcPythonCommand):
         print("--------------------------------------------")
         print(f"ポケモンSV自動レイドプログラムVer.{self.ver}")
         print("")
-        print("---------------Special Thanks---------------")
-        print("")
-        print("テラレイドポケモン認識プログラム @minahoku様")
-        print("十字キー入力 シリアル通信直打ち版 @こちゃてす様")
-        print("")
-        print("--------------------------------------------")
-        print("自動レイドを起動します")
-        print("")
 
         self.window()
         while not self.select_flag:
@@ -51,14 +43,6 @@ class SV_Raid_2(ImageProcPythonCommand):
         ball = self.rename("jp",self.ball)
         print(f"使用するボールは {ball} です")
         print("")
-        log = []
-
-        print("使用するポケモンは")
-        for k, v in self.use_poke.items():
-            n = self.rename("jp",k)
-            m = self.rename("jp",v)
-            log.append(f"{n}\t\t=>\t{m}")
-        print('\n'.join(log))
 
         while True:
             self.wait(1)
