@@ -22,7 +22,10 @@ class SV_Raid_2(ImageProcPythonCommand):
         self.select_flag = False
         self.use_poke = {}
         self.ball = ""
-        self.get_flag = False
+        self.poke = ""
+        self.type_index = 0
+        self.type = ""
+        self.star = 0
         self.flag = False
         self.count = 1
         self.terastal_flag = False
@@ -60,7 +63,10 @@ class SV_Raid_2(ImageProcPythonCommand):
         while True:
             self.wait(1)
             print("--------------------------------------------")
-            self.get_flag = False
+            self.poke = ""
+            self.type_index = 0
+            self.type = ""
+            self.star = 0
             if self.flag:
                 print("ポケモンを変更します")
                 self.time()
@@ -72,9 +78,11 @@ class SV_Raid_2(ImageProcPythonCommand):
                 poke = self.poke_name()
                 for i, type in enumerate(self.use_poke):
                     if self.isContainTemplate(f"SV/Raid/type/{type}",0.8):
-                        self.get_flag = self.get_flag_check(i,poke)
-                        t = self.rename("jp",type)
-                        print(f"{self.count}匹目 星:{star} {poke}:{t}タイプ")
+                        self.poke = poke
+                        self.type_index = i
+                        self.type = self.rename("jp",type)
+                        self.star = star
+                        print(f"{self.count}匹目 星:{self.star} {self.poke}:{self.type}タイプ")
                         self.select_poke(type)
                         self.battle(type)
                         break
@@ -156,17 +164,6 @@ class SV_Raid_2(ImageProcPythonCommand):
             else:
                 pass
         return output
-
-    def get_flag_check(self,num,poke):
-        with open('./Template/SV/Raid/PokeSV_Catchlist.csv', encoding="utf-8") as f:
-            reader = csv.reader(f)
-            data = [row for row in reader]
-        for i in data:
-            if i[0] == poke:
-                if i[num+1] == "1":
-                    return True
-                else:
-                    return False
 
     def star_count(self):
         img = self.camera.readFrame()
@@ -255,12 +252,24 @@ class SV_Raid_2(ImageProcPythonCommand):
                 print("レイドバトルに勝利しました！")
                 self.count = self.count +1
                 self.wait(0.5)
-                if self.get_flag:
+
+                with open('./Template/SV/Raid/PokeSV_Catchlist.csv', encoding="utf-8") as f:
+                    reader = csv.reader(f)
+                    data = [row for row in reader]
+                for i in data:
+                    if i[0] == self.poke:
+                        if self.star >= 6 or i[self.type_index + 1] == "1":
+                            get_flag = True
+                        else:
+                            get_flag = False
+                
+                if get_flag:
                     self.press(Button.A,0.1,1)
                     while True:
                         if self.isContainTemplate(f"SV/Raid/ball/{self.language}/{self.ball}", 0.9):
                             ball = self.rename("jp",self.ball)
-                            print(f"ポケモンを {ball} で捕まえます")
+                            print(f"{self.count}匹目 星:{self.star} {self.poke}:{self.type}タイプ を {ball} で捕まえます")
+                            self.LINE_image(f"{self.count}匹目 星:{self.star} {self.poke}:{self.type}タイプ を {ball} で捕まえます")
                             self.press(Button.A,0.1,1)
                             self.press(Button.A,0.1,1)
                             break
@@ -268,6 +277,8 @@ class SV_Raid_2(ImageProcPythonCommand):
                             self.Hatpress(Hat.LEFT, 0.1,0.5)
                 else:
                     print("ポケモンを捕まえません")
+                    if (self.count - 1) % 10 == 0:
+                        self.LINE_text(f"{self.count - 1}匹目 星:{self.star} {self.poke}:{self.type}タイプ を捕まえません")
                     self.Hatpress(Hat.BTM, 0.1,0.5)
                     self.press(Button.A,0.1,1)
                 self.field_check()
