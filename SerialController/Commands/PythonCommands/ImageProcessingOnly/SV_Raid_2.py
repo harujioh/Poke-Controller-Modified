@@ -519,34 +519,34 @@ class SV_Raid_2(ImageProcPythonCommand):
         btn = tk.Button(set_window,text="決定",command=lambda:hoge(),width = 20)
         btn.grid(row=0,column=0,columnspan=2,pady=5)
 
-        def hoge():
-            self.use_poke = {"normal.png":self.rename("eng",self.normal.get()),
-                            "fire.png":self.rename("eng",self.fire.get()),
-                            "water.png":self.rename("eng",self.water.get()),
-                            "grass.png":self.rename("eng",self.grass.get()),
-                            "electric.png":self.rename("eng",self.electric.get()),
-                            "ice.png":self.rename("eng",self.ice.get()),
-                            "fighting.png":self.rename("eng",self.fighting.get()),
-                            "poison.png":self.rename("eng",self.poison.get()),
-                            "ground.png":self.rename("eng",self.ground.get()),
-                            "flying.png":self.rename("eng",self.flying.get()),
-                            "psychic.png":self.rename("eng",self.psychic.get()),
-                            "bug.png":self.rename("eng",self.bug.get()),
-                            "rock.png":self.rename("eng",self.rock.get()),
-                            "ghost.png":self.rename("eng",self.ghost.get()),
-                            "dragon.png":self.rename("eng",self.dragon.get()),
-                            "dark.png":self.rename("eng",self.dark.get()),
-                            "steel.png":self.rename("eng",self.steel.get()),
-                            "fairy.png":self.rename("eng",self.fairy.get())
-                            }
-            self.ball = self.rename("eng",ball_box.get())
+        self.wait(0.3)
+        self.use_poke = {"normal.png":self.rename("eng",self.normal.get()),
+                        "fire.png":self.rename("eng",self.fire.get()),
+                        "water.png":self.rename("eng",self.water.get()),
+                        "grass.png":self.rename("eng",self.grass.get()),
+                        "electric.png":self.rename("eng",self.electric.get()),
+                        "ice.png":self.rename("eng",self.ice.get()),
+                        "fighting.png":self.rename("eng",self.fighting.get()),
+                        "poison.png":self.rename("eng",self.poison.get()),
+                        "ground.png":self.rename("eng",self.ground.get()),
+                        "flying.png":self.rename("eng",self.flying.get()),
+                        "psychic.png":self.rename("eng",self.psychic.get()),
+                        "bug.png":self.rename("eng",self.bug.get()),
+                        "rock.png":self.rename("eng",self.rock.get()),
+                        "ghost.png":self.rename("eng",self.ghost.get()),
+                        "dragon.png":self.rename("eng",self.dragon.get()),
+                        "dark.png":self.rename("eng",self.dark.get()),
+                        "steel.png":self.rename("eng",self.steel.get()),
+                        "fairy.png":self.rename("eng",self.fairy.get())
+                        }
+        self.ball = self.rename("eng",ball_box.get())
 
-            if lng_box.get() == "日本語":
-                self.language = "jp"
-            else:
-                self.language = "eng"
-            self.select_flag = True
-            set_window.destroy()
+        if lng_box.get() == "日本語":
+            self.language = "jp"
+        else:
+            self.language = "eng"
+        self.select_flag = True
+        set_window.destroy()
 
     def rename(self,lang,text):
         dic = {"normal.png":"ノーマル",
